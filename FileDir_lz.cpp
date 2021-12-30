@@ -1,7 +1,7 @@
 #include "FileAccess.hpp"
+#include "User.hpp"
 using namespace std;
 
-int state; //用户
 string now; //当前目录
 struct FCB
 {
@@ -64,7 +64,10 @@ public:
     // false: 有重复
     bool check_double(char *path){
         bool ok = check(path);
-        if(ok == false) return nullptr;
+        if (ok == false) {
+            std::cerr << "路径不合法！" << std::endl;
+            exit(1);
+        }
         string use_name;
         string name;
         int len = strlen(path);

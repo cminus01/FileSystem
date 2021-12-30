@@ -1,21 +1,16 @@
-#include "FileAccess.hpp"
-#include "User.hpp"
 #include "FileDir_lz.cpp"
-#include <iostream>
-#include <set>
-#include <map>
 
 int cnt; //fd的序号
 struct OpenFileTable {
+    int fd; //文件描述符
+    int Pno; //文件编号
+    int type; //打开方式
     OpenFileTable(int t, int pno)
     {
         type = t;
         fd = ++cnt;
         Pno = pno;
     }
-    int fd; //文件描述符
-    int Pno; //文件编号
-    int type; //打开方式
 };
 std::map <int, OpenFileTable> Fd2Table; //记录文件编号到文件打开表的映射
 

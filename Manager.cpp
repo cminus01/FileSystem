@@ -119,7 +119,7 @@ int Manager::Open(char *path, int type)
     if (fd.check_double(path))
     {
         std::cerr << "打开失败，不存在这个文件！" << std::endl;
-        return ;
+        exit(1);
     }
     FCB* file = fd.FindPos(path);
     if (ts(file->use_name) != state)
