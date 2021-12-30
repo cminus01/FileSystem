@@ -1,5 +1,7 @@
 #include <cstdio>
 #include <cstring>
+#include <iostream>
+#include <string>
 #include "Manager.hpp"
 
 Manager manager;
@@ -7,29 +9,33 @@ int main()
 {
     while (true)
     {
-        if (user.state == 0) 
+        if (state == 0) 
         {
             printf("login: ");
             char s[1024];
             scanf("%s", s);
-            user.login(s);
+            if (user[mp[s]].login())
+            {
+                state = mp[s];
+            }
         }
         else
         {
-            user.show();
-            char s[1024];
-            scanf("[^#]%s", s);
-            if (strcmp(s, "logout") == 0)
+            user[state].show();
+            
+            std::string s;
+            std::cin >> s;
+            if (s == "logout")
             {
-                user.logout();
+                user[state].logout();
             }
-            else if (strcmp(s, "exit") == 0)
+            else if (s == "exit")
             {
                 break;
             }
-            else if (strcmp(s, "Usage") == 0)
+            else if (s == "Usage")
             {
-                ShowUsage();
+               // ShowUsage();
             }
             else
             {

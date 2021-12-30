@@ -1,4 +1,3 @@
-#include<bits/stdc++.h>
 using namespace std;
 
 int state; //用户
@@ -79,7 +78,7 @@ public:
 
 
     //通过文件的Pno去找其FCB
-   /* FCB* OpenFile(int fd){
+    FCB* Pno2FCB(int fd){
         for(int i = 0;i < mfd.size; ++i){
             for(int j = 0;j < mfd.Main[i].size; ++j){
                 if(mfd.Main[i].fcb[j].Pno == fd){
@@ -89,7 +88,7 @@ public:
             }
         }
         return nullptr;      
-    }*/
+    }
 
 
     //通过路径去找FCB
