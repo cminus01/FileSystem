@@ -13,41 +13,41 @@
 
 #### 数据结构
 
-+ FCB
+- FCB
 
-  ```c++
-  struct FCB {
-      int Pno; // 此目录里面的编号
-      int size; // 大小
-      string name; //用户中文件名
-      string use_name; //用户
-      int address; // 地址
-  };
-  ```
+	```c++
+	struct FCB {
+	    int Pno; // 此目录里面的编号
+	    int size; // 大小
+	    string name; //用户中文件名
+	    string use_name; //用户
+	    int address; // 地址
+	};
+	```
 
-+ 文件目录结构
+- 文件目录结构
 
-  ```c++
-  struct UFDnode{ // 用户文件目录
-      string use_name; //用户名
-      int size;//用户文件大小
-      FCB fcb[10];
-  };
-  struct MFD{ //用户目录
-      int size;//用户大小
-      UFDnode Main[10];
-  }mfd; 
-  ```
+	```c++
+	struct UFDnode{ // 用户文件目录
+	    string use_name; //用户名
+	    int size;//用户文件大小
+	    FCB fcb[10];
+	};
+	struct MFD{ //用户目录
+	    int size;//用户大小
+	    UFDnode Main[10];
+	}mfd; 
+	```
 
-+ 运行文件目录
+- 运行文件目录
 
-  ```c++
-  struct OpenFileTable {
-      int fd; //文件描述符
-      int Pno; //文件编号
-      int type; //打开方式
-  };
-  ```
+	```c++
+	struct OpenFileTable {
+	    int fd; //文件描述符
+	    int Pno; //文件编号
+	    int type; //打开方式
+	};
+	```
 
 #### 模块划分
 
@@ -55,8 +55,8 @@
 
 负责用户的登录部分 
 
-+ 账户、密码正确性检测
-+ 修改与当前登入用户相关的信息
+- 账户、密码正确性检测
+- 修改与当前登入用户相关的信息
 
 ```c++
 class User {
@@ -86,7 +86,32 @@ public:
 文件存储管理部分
 
 ```c++
+class FileAccess {
+private:
+    static const int maxn = 1 << 20;
+public:
+    char disk[maxn];
+	
+    // 剩余连续空间
+    std::set< std::pair<int, int> > remaining_space;
+    FileAccess()
+    {
+        remaining_space.insert(std::make_pair(0, maxn-1));
+    }
 
+    // 申请一块空间，返回物理地址
+    // 如果无法申请，返回-1
+    int Apply(int size);
+
+    // 删除从pos开始，长度为size的空间中的信息
+    void Del(int pos, int size);
+
+    // 读取begin开始，长度位len的空间中的信息
+    void Read(int begin, int len);
+
+    // 把begin开始，长度位len的空间中的信息写为s
+    void Write(int begin, int len, std::string s);
+};
 ```
 
 
