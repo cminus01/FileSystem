@@ -12,10 +12,12 @@ public:
         name = n; 
         password = p;
     }
+    // 登出
     void logout()
     {
         state = 0;
     }
+    // 返回是否登陆成功
     bool login()
     {
         std::cout << "Password: ";

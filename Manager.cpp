@@ -3,15 +3,6 @@
 FileDirectory fd;
 FileAccess space;
 
-int ts(std::string now)
-{
-    for (int i = 0; i < 10; i++)
-        if (mfd.Main[i].use_name == now)
-        {
-            return i;
-        }
-}
-
 void Manager::Command(std::string s)
 {
     if (s == "Create") 
@@ -86,6 +77,10 @@ void Manager::Command(std::string s)
 
         fd.Goto(pos);
     }
+    else if (s == "ll")
+    {
+        fd.LL();
+    }
     else
     {
         std::cerr << "没有这个命令！" << std::endl;
@@ -94,12 +89,12 @@ void Manager::Command(std::string s)
 
 void Manager::Create(char *path, int limit, int maxLength)
 {
-    if (fd.check(path)) 
+    if (!fd.check(path)) 
     {
         std::cerr << "创建失败，不符合命名规范！" << std::endl;
         return ;
     }
-    if (fd.check_double(path))
+    if (!fd.check_double(path))
     {
         std::cerr << "创建失败，有重名文件！" << std::endl;
         return ;
@@ -115,16 +110,21 @@ void Manager::Create(char *path, int limit, int maxLength)
         std::cerr << "创建失败，目录已满！" << std::endl;
         return ;
     }
-    fd.Create(path, num, maxLength);
+    fd.Create(path, num, limit, maxLength);
     return ;
 }
 
 int Manager::Open(char *path, int type)
 {
+    if (fd.check_double(path))
+    {
+        std::cerr << "打开失败，不存在这个文件！" << std::endl;
+        return ;
+    }
     FCB* file = fd.FindPos(path);
     if (ts(file->use_name) != state)
     {
-        std::cerr << "打开失败，文件不存在！" << std::endl;
+        std::cerr << "打开失败，没有权限！" << std::endl;
         return -1;
     }
     if (Fd2Table.size() >= opensize) 
@@ -148,6 +148,11 @@ void Manager::Read(int FD, int beginPos, int len)
         return ;
     }
     FCB* file = fd.Pno2FCB(Fd2Table[FD].Pno);
+    if (ts(file->use_name) != state || !(file->limit & (1 << 2)))
+    {
+        std::cerr << "读失败，没有权限！" << std::endl;
+        return ;
+    }
     space.Read(file->address + beginPos, len);
 }
 
@@ -159,6 +164,11 @@ void Manager::Write(int FD, int beginPos, int len, string s)
         return ;
     }
     FCB* file = fd.Pno2FCB(Fd2Table[FD].Pno);
+    if (ts(file->use_name) != state || !(file->limit & (1 << 1)))
+    {
+        std::cerr << "写失败，没有权限！" << std::endl;
+        return ;
+    }
     space.Write(file->address + beginPos, len, s);
 }
 
@@ -192,6 +202,11 @@ void Manager::Delete(char* path)
                 std::cerr << "删除失败，该文件未被全部关闭！" << std::endl;
                 return ;
             }
+        }
+        if (ts(file->use_name) != state)
+        {
+            std::cerr << "删除失败，没有权限！" << std::endl;
+            return ;
         }
         space.Del(file->address, file->size);
         fd.Delete(path);
