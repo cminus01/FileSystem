@@ -22,6 +22,8 @@ int FileAccess::Apply(int size) {
 			return x;
 		}
 	}
+
+	return -1;
 }
 
 void FileAccess::Del(int pos, int size) {
