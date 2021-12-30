@@ -32,11 +32,20 @@
 + 账户、密码正确性检测
 + 修改与当前登入用户相关的信息
 + 读取用户的命令，检测是否合理
++ 判断用户是否有权限访问
 + 调用Manager部分的API实现用户指令
 
 ##### FileDirectory模块
 
 文件目录部分
+
+```c++
+class FileDirectory {
+public:
+    FCB* OpenFile(int fd);
+    FCB* FindPos(char* path, char* state);
+}
+```
 
 ##### FileAccess模块
 
