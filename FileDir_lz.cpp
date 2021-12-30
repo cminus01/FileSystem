@@ -9,6 +9,7 @@ struct FCB
     int size; // 大小
     string name; //用户中文件名
     string use_name; //用户
+    int limit; //属性 ->只读/写/均可
     int address; // 地址
 };
 
@@ -22,6 +23,25 @@ struct MFD{ //用户目录
     int size;//用户大小
     UFDnode Main[10];
 }mfd; 
+
+int ts(std::string now)
+{
+    for (int i = 0; i < 10; i++)
+        if (mfd.Main[i].use_name == now)
+        {
+            return i;
+        }
+}
+char tmp[10];
+char* trans(int l)
+{
+    tmp[0] = tmp[1] = tmp[2] = '-';
+    tmp[3] = '\n';
+    if (l & (1 << 2))   tmp[0] = 'r';
+    if (l & (1 << 1))   tmp[1] = 'w';
+    if (l & (1 << 0))   tmp[2] = 'x';
+    return tmp;
+}
 
 class FileDirectory {
 public:
@@ -78,12 +98,54 @@ public:
         }
         cout << endl;
     }
+
+    //ll
+    void LL()
+    {
+        if (now == "")
+        {
+            for(int i = 0;i < mfd.size; ++i){
+                if (mfd.Main[i].use_name == user[state].name)
+                {
+                    printf("drwx %8s %6d ", user[state].name, mfd.Main[i].size);
+                }
+                else
+                {
+                    printf("dr-- %8s %6d ", mfd.Main[i].use_name, mfd.Main[i].size);
+                }
+                cout << mfd.Main[i].use_name << "/" << endl;
+            }
+        }
+        else
+        {
+            int no = ts(now);
+            for(int i = 0; i < mfd.Main[no].size; ++i){
+                if (now == user[state].name)
+                {
+                    printf("-%s %8s %6d ", trans(mfd.Main[i].fcb->limit), user[state].name, mfd.Main[no].fcb[i].size);
+                }
+                else
+                {
+                    printf("---- %8s %6d ", mfd.Main[no].fcb[i].use_name, mfd.Main[no].fcb[i].size);
+                }
+                cout << mfd.Main[no].fcb[i].name << endl;
+            }
+        }
+    }
+
     // cd
     void Goto(string name){
-        if(name == "home"){
+        if(name == ".."){
             now = "";
         }
-        else now = name;
+        else {
+            if (now != "")
+            {
+                cerr << "没有这个文件或者目录" << endl;
+                return ;
+            }
+            now = name;
+        }
     }
 
 
@@ -123,7 +185,7 @@ public:
             }
         }
     }
-    void Create(char *path,int pos,int maxLength){
+    void Create(char *path, int pos, int limit, int maxLength){
         string use_name;
         string name;
         int len = strlen(path);
@@ -146,6 +208,7 @@ public:
         mfd.Main[state].fcb[size].name = name;
         mfd.Main[state].fcb[size].address = pos;
         mfd.Main[state].fcb[size].size = maxLength;
+        mfd.Main[state].fcb[size].limit = limit;
         mfd.Main[id].size++;
 
     }
@@ -176,10 +239,3 @@ public:
         }
     }
 };
-
-
-
-
-int main(){
-    return 0;
-}

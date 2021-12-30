@@ -14,26 +14,58 @@
 #### 数据结构
 
 + FCB
+
+  ```c++
+  struct FCB {
+      int Pno; // 此目录里面的编号
+      int size; // 大小
+      string name; //用户中文件名
+      string use_name; //用户
+      int address; // 地址
+  };
+  ```
+
 + 文件目录结构
-+ 文件索引表
-+ 系统打开表
-+ 用户打开表
+
+  ```c++
+  struct UFDnode{ // 用户文件目录
+      string use_name; //用户名
+      int size;//用户文件大小
+      FCB fcb[10];
+  };
+  struct MFD{ //用户目录
+      int size;//用户大小
+      UFDnode Main[10];
+  }mfd; 
+  ```
+
++ 运行文件目录
+
+  ```c++
+  struct OpenFileTable {
+      int fd; //文件描述符
+      int Pno; //文件编号
+      int type; //打开方式
+  };
+  ```
 
 #### 模块划分
 
-##### Usage模块
-
-描述文件系统使用方法
-
 ##### User模块
 
-负责用户的登录部分
+负责用户的登录部分 
 
 + 账户、密码正确性检测
 + 修改与当前登入用户相关的信息
-+ 读取用户的命令，检测是否合理
-+ 判断用户是否有权限访问
-+ 调用Manager部分的API实现用户指令
+
+```c++
+class User {
+    bool login(); // 返回是否登陆成功
+    void logout(); // 登出
+};
+```
+
+
 
 ##### FileDirectory模块
 
@@ -42,18 +74,83 @@
 ```c++
 class FileDirectory {
 public:
-    FCB* OpenFile(int fd);
+    bool Check(char *path);
     FCB* FindPos(char* path, char* state);
 }
 ```
+
+
 
 ##### FileAccess模块
 
 文件存储管理部分
 
+```c++
+
+```
+
+
+
 ##### Manager模块
 
-实现用户/系统命令模块
+实现用户命令的模块
+
+包括下面几个API
+
+```c++
+class Manager {
+public:
+    /** 
+     * 写一个文件
+     * @param[in]   path    文件路径
+     * @param[in]   limit   文件限制
+     * @param[in]   maxLength   文件最大大小
+     * 
+     */
+    void Create(char *path, int limit, int maxLength);
+
+    /** 
+     * 写一个文件
+     * @param[in]   path    文件路径
+     * @param[in]   type    模式
+     * 
+     */
+    int Open(char *path, int type);
+
+    /** 
+     * 读一个文件
+     * @param[in]   FD    文件描述符
+     * @param[in]   beginPos    开始位置
+     * @param[in]   len 长度
+     * 
+     */
+    void Read(int FD, int beginPos, int len);
+
+    /** 
+     * 写一个文件
+     * @param[in]   FD    文件描述符
+     * @param[in]   beginPos    开始位置
+     * @param[in]   len 长度
+     * @param[in]   s   写的内容
+     * 
+     */
+    void Write(int FD, int beginPos, int len, string s);
+
+    /** 
+     * 关闭一个文件
+     * @param[in]   FD    文件描述符
+     * 
+     */
+    void Close(int FD);
+
+    /** 
+     * 删除一个文件
+     * @param[in]   path    需要删除文件的路径
+     * 
+     */
+    void Delete(char* path);
+};
+```
 
 
 
