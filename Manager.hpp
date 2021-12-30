@@ -1,10 +1,10 @@
 #include "FileAccess.hpp"
-#include "utils.cpp"
 #include <iostream>
 #include <set>
 #include <map>
 // #include <FileDirectory.h>
 #include "User.hpp"
+#include "FileDir_lz.cpp"
 int cnt; //fd的序号
 struct OpenFileTable {
     OpenFileTable(int t, int pno)
@@ -20,9 +20,6 @@ struct OpenFileTable {
 std::map <int, OpenFileTable> Fd2Table; //记录文件编号到文件打开表的映射
 
 int opensize = 10; //最大打开文件数量
-struct OpenFileTable {
-    int num;
-};
 
 class Manager {
 public:
@@ -38,5 +35,5 @@ public:
 
     void Close(int FD);
 
-    void Delete(std::string path);
+    void Delete(char* path);
 };

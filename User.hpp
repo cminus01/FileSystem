@@ -1,11 +1,17 @@
-#include "utils.cpp"
+#include <iostream>
 #include <map>
 int state;
 class User
 {
 private:
-    std::string name, password;
+    string password;
 public:
+    string name; 
+    void init(string n, string p)
+    {
+        name = n; 
+        password = p;
+    }
     void logout()
     {
         state = 0;

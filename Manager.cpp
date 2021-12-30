@@ -1,5 +1,4 @@
 #include "Manager.hpp"
-#include "FileDir_lz.cpp"
 
 FileDirectory fd;
 FileAccess space;
@@ -64,9 +63,9 @@ void Manager::Command(std::string s)
     }
     else if (s == "Delete")
     {
-        string path;
-        std::cin >> path;
+        char path[1024];
 
+        scanf("%s", path);
         Delete(path);
     }
     else if (s == "ls")
@@ -77,8 +76,7 @@ void Manager::Command(std::string s)
         }
         else
         {
-            //TODO:
-            //fd.show_all();
+            fd.show_all(ts(now));
         }
     }
     else if (s == "cd")
@@ -117,14 +115,14 @@ void Manager::Create(char *path, int limit, int maxLength)
         std::cerr << "创建失败，目录已满！" << std::endl;
         return ;
     }
-    //fd.create(u, name, limit, maxLength);
+    fd.Create(path, num, maxLength);
     return ;
 }
 
 int Manager::Open(char *path, int type)
 {
     FCB* file = fd.FindPos(path);
-    if (file->use_name != state)
+    if (ts(file->use_name) != state)
     {
         std::cerr << "打开失败，文件不存在！" << std::endl;
         return -1;
@@ -149,19 +147,19 @@ void Manager::Read(int FD, int beginPos, int len)
         std::cerr << "读失败，不存在这个文件！" << std::endl;
         return ;
     }
-    FCB* file = Pno2FCB(Fd2Table[FD].Pno);
+    FCB* file = fd.Pno2FCB(Fd2Table[FD].Pno);
     space.Read(file->address + beginPos, len);
 }
 
-void Manager::Write(int FD, int beginPos, int len, std::string s)
+void Manager::Write(int FD, int beginPos, int len, string s)
 {
     if (Fd2Table.find(FD) == Fd2Table.end())
     {
         std::cerr << "写失败，不存在这个文件！" << std::endl;
         return ;
     }
-    FCB* file = Pno2FCB(Fd2Table[FD].Pno);
-    space.Write(file->address + beginPos, len, std::string s);
+    FCB* file = fd.Pno2FCB(Fd2Table[FD].Pno);
+    space.Write(file->address + beginPos, len, s);
 }
 
 void Manager::Close(int FD)
@@ -177,9 +175,9 @@ void Manager::Close(int FD)
     }
 }
 
-void Manager::Delete(char *path)
+void Manager::Delete(char* path)
 {
-    if (!fd.check_double(path))
+    if (fd.check_double(path))
     {
         std::cerr << "删除失败，不存在该文件！" << std::endl;
         return ;
@@ -195,7 +193,8 @@ void Manager::Delete(char *path)
                 return ;
             }
         }
-        space.Del(address, size);
+        space.Del(file->address, file->size);
+        fd.Delete(path);
     }
     return ;
 }

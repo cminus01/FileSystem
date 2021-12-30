@@ -1,10 +1,11 @@
+#include "FileAccess.hpp"
 using namespace std;
 
 int state; //用户
 string now; //当前目录
 struct FCB
 {
-    //int Pno; // 此目录里面的编号
+    int Pno; // 此目录里面的编号
     int size; // 大小
     string name; //用户中文件名
     string use_name; //用户
@@ -39,20 +40,29 @@ public:
     }
 
     // 判重
-    bool check_double(char *name,string use_name){
-        //bool ok = 0;
-        int num = 0;
+    // true: 没有重复
+    // false: 有重复
+    bool check_double(char *path){
+        bool ok = check(path);
+        if(ok == false) return nullptr;
+        string use_name;
+        string name;
+        int len = strlen(path);
+        ok = 0;
+        for(int i = 0;i < len; ++i){
+            if(path[i] == '\\') {ok = 1;continue;}
+            if(ok == 0){use_name += path[i];}
+            else {name += path[i];}
+        }
         for(int i = 0;i < mfd.size; ++i){
-            if(mfd.Main[i].use_name == use_name)
-            {
-                int no = i;
-                for(int j = 0;j < mfd.Main[no].fcb[j].size; ++j)
-                    if(strcmp(mfd.Main[no].fcb[j].name.c_str(),name) == 0){
-                        ++num;
-                    }
-                break;
+            for(int j = 0;j < mfd.Main[i].size; ++j){
+                if(mfd.Main[i].fcb[j].name == name && mfd.Main[i].fcb[j].use_name == use_name){
+                    now = mfd.Main[i].use_name;
+                    return false;
+                }
             }
-        }if(num > 1) return false;return true;
+        }
+        return true;
     }
 
     // ls
@@ -116,10 +126,6 @@ public:
     void Create(char *path,int pos,int maxLength){
         string use_name;
         string name;
-        if(!check(path) || !check_double(path,now)){
-            cout << "Error" << endl;
-            return ;
-        }
         int len = strlen(path);
         int ok = 0;
         for(int i = 0;i < len; ++i){
@@ -146,10 +152,6 @@ public:
     void Delete(char *path){
         string use_name;
         string name;
-        if(!check(path) || !check_double(path,now)){
-            cout << "Error" << endl;
-            return ;
-        }
         int len = strlen(path);
         int ok = 0;
         for(int i = 0;i < len; ++i){
@@ -172,7 +174,6 @@ public:
                 return ;
             }
         }
-        cout << "ERROR" << endl;
     }
 };
 
