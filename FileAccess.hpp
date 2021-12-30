@@ -5,18 +5,17 @@
 #include <string>
 
 class FileAccess {
+private:
+    static const int maxn = 1 << 20;
 public:
-    char disk[1024*1024];
-    struct eBlock
-    {
-        int pos;
-        int size;
-        struct eBlock* nt;
-    };
+    char disk[maxn];
+
+    std::set< std::pair<int, int> > remaining_space;
     FileAccess()
     {
-        
+        remaining_space.insert(std::make_pair(0, maxn-1));
     }
+
     // 申请一块空间，返回物理地址
     // 如果无法申请，返回-1
     int Apply(int size);
