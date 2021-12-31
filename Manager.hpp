@@ -1,22 +1,21 @@
-#include "FileDir_lz.cpp"
-
-int cnt; //fd的序号
-struct OpenFileTable {
-    int fd; //文件描述符
-    int Pno; //文件编号
-    int type; //打开方式
-    OpenFileTable(int t, int pno)
-    {
-        type = t;
-        fd = ++cnt;
-        Pno = pno;
-    }
-};
-std::map <int, OpenFileTable> Fd2Table; //记录文件编号到文件打开表的映射
-
-int opensize = 5; //最大打开文件数量
-
+#include <map>
 class Manager {
+private:
+    int cnt; //fd的序号
+    struct OpenFileTable {
+        int fd; //文件描述符
+        int Pno; //文件编号
+        int type; //打开方式
+        void init(int t, int pno, int cnt)
+        {
+            type = t;
+            fd = cnt;
+            Pno = pno;
+        }
+    };
+    std::map <int, OpenFileTable> Fd2Table; //记录文件编号到文件打开表的映射
+
+    int opensize = 5; //最大打开文件数量
 public:
     // 解析所有命令
     void Command(std::string s);

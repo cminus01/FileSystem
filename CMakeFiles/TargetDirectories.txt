@@ -1,0 +1,3 @@
+/home/cminus/win10/Desktop/code/FileSystem/CMakeFiles/rebuild_cache.dir
+/home/cminus/win10/Desktop/code/FileSystem/CMakeFiles/edit_cache.dir
+/home/cminus/win10/Desktop/code/FileSystem/CMakeFiles/FileSystem.dir

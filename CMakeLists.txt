@@ -5,8 +5,4 @@ set(CMAKE_CXX_STANDARD 17)
 
 add_executable(FileSystem 
     main.cpp 
-    User.hpp 
-    FileDir_lz.cpp 
-    FileAccess.cpp 
-    Manager.cpp
 )

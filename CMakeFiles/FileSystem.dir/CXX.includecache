@@ -1,0 +1,26 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/cminus/win10/Desktop/code/FileSystem/main.cpp
+cstdio
+-
+vector
+-
+set
+-
+iostream
+-
+string
+-
+string.h
+-
+algorithm
+-
+map
+-
+
